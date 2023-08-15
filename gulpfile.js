@@ -65,12 +65,12 @@ gulp.task('replace', function(){
   return gulp.src(['index.html'])
     .pipe(replace('{{image_list}}', image_list.toString()))
     .pipe(replace('{{people_lookup}}', people_lookup.toString()))
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('docs/'));
 });
 
 gulp.task('image_crawl', function(){
   return gulp
-    .src('./dist/images/**/*.*')
+    .src('./docs/images/**/*.*')
     .pipe(require('gulp-filelist')('image_list.json', { absolute: true }))
     .pipe(gulp.dest('data'))
 });
