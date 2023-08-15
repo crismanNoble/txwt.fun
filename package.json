@@ -1,0 +1,30 @@
+{
+  "name": "txwt.fun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "gulp": "./node_modules/.bin/gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crismanNoble/txwt.fun.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crismanNoble/txwt.fun/issues"
+  },
+  "homepage": "https://github.com/crismanNoble/txwt.fun#readme",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-file": "^0.4.0",
+    "gulp-filelist": "^2.0.5",
+    "gulp-minify": "^3.1.0",
+    "gulp-replace": "^1.1.4",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.65.1"
+  }
+}

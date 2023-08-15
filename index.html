@@ -1,0 +1,82 @@
+<html>
+<head>
+  
+  <style>
+    img {
+      max-width: 100%;
+      height:auto;
+    }
+    html, body {
+      margin:0;
+    }
+    .logo {
+      max-width: 200px;
+      margin: 16px auto;
+      display: block;
+    }
+
+    /* fluid 5 columns */
+.image_wrapper { width: 20%; }
+
+  </style>
+  <script src="./jquery.js"></script>
+  <script src="./masonry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/macy@2"></script>
+
+</head>
+<body>
+  <img src="./img/logowithflower.png" class="logo"/>
+  <div class="images"></div>
+
+  <script>
+    $(document).ready(function(){
+
+
+      var image_list = {{image_list}};
+      var people_lookup = {{people_lookup}};
+      console.log(image_list, people_lookup);
+
+
+
+      var $images = $('.images');
+      for (let i of image_list) {
+        let $img = $(document.createElement('img'));
+        let $wrapper = $(document.createElement('div'));
+        i = i.split('/dist/')[1];
+        i = './'+i;
+        console.log(i);
+        $wrapper.addClass('image_wrapper');
+        $img.attr('src', i).attr('loading','lazy');
+        $wrapper.append($img);
+        $images.append($wrapper);
+      }
+      
+
+      // jQuery('.images').masonry({
+      //   // options
+      //   itemSelector: '.image_wrapper',
+      //   columnWidth: 200,
+      //   percentPosition: true
+      // });
+
+      var macy = Macy({
+          container: '.images',
+          trueOrder: true,
+          waitForImages: false,
+          margin: 2,
+          columns: 6,
+          breakAt: {
+              1200: 5,
+              940: 3,
+              520: 2,
+              400: 1
+          }
+      });
+
+    });
+
+    
+
+  </script>
+</body>
+</html>
