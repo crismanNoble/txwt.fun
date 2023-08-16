@@ -8,6 +8,7 @@
     }
     html, body {
       margin:0;
+      font-family: monospace;
     }
     .logo {
       max-width: 200px;
@@ -17,6 +18,14 @@
 
     /* fluid 5 columns */
 .image_wrapper { width: 20%; }
+.ctas{
+  margin: 16px auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.ctas a {
+ color: black;
+}
 
   </style>
   <script src="./jquery.js"></script>
@@ -26,6 +35,7 @@
 </head>
 <body>
   <img src="./img/logowithflower.png" class="logo"/>
+  <div class="ctas" style="text-align: center;"><a href="https://www.dropbox.com/request/AXpcMWo2DrXTqHKupC8b">Upload your pictures to dropbox to share them here.</a> | <a href="https://forms.gle/6XpZYoXDLL7TEX449">Fill out this google form if you me to print you one of the images.</a></div>
   <div class="images"></div>
 
   <script>
