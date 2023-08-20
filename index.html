@@ -10,6 +10,9 @@
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="607" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
 </head>
 <body>
   <img src="./img/logowithflower.png" class="logo"/>
@@ -99,18 +102,22 @@
         pages_of_images_loaded++;
 
         if(!grid) {
+          var cols = 6;
+          var ww = $(window).width();
+          console.log('ww', ww);
+          if(ww < 1200) {
+            cols = 4;
+          }
+          if(ww < 800) {
+            cols = 2;
+          }
+          console.log(ww);
           grid = Macy({
               container: '.images',
               // trueOrder: true,
               waitForImages: false,
               margin: 2,
-              columns: 6,
-              breakAt: {
-                  1200: 5,
-                  940: 3,
-                  520: 2,
-                  400: 1
-              }
+              columns: cols
           });
         } else {
           window.setTimeout(function(){
