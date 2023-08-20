@@ -1,87 +1,198 @@
 <html>
 <head>
   
-  <style>
-    img {
-      max-width: 100%;
-      height:auto;
-    }
-    html, body {
-      margin:0;
-      font-family: monospace;
-    }
-    .logo {
-      max-width: 200px;
-      margin: 16px auto;
-      display: block;
-    }
-
-    /* fluid 5 columns */
-.image_wrapper { width: 20%; }
-.ctas{
-  margin: 16px auto;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-.ctas a {
- color: black;
-}
-
-  </style>
+  <link href="./style.css" rel="stylesheet" type="text/css" media="all" />
   <script src="./jquery.js"></script>
   <script src="./masonry.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/macy@2"></script>
 
+  <meta property="og:image" content="https://www.txwt.fun/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="607" />
+
 </head>
 <body>
   <img src="./img/logowithflower.png" class="logo"/>
-  <div class="ctas" style="text-align: center;"><a href="https://www.dropbox.com/request/AXpcMWo2DrXTqHKupC8b">Upload your pictures to dropbox to share them here.</a> | <a href="https://forms.gle/6XpZYoXDLL7TEX449">Fill out this google form if you me to print you one of the images.</a></div>
+  <div class="ctas" style="text-align: center;"><a href="https://www.dropbox.com/request/AXpcMWo2DrXTqHKupC8b">Upload your pictures to dropbox to share them here.</a> | <a href="https://forms.gle/6XpZYoXDLL7TEX449">Uploaders: fill out this if want a print of one of your images.</a></div>
+  
+  <div class="thankyous"></div>
+
   <div class="images"></div>
+  
+
+  <div class="load_more"><button class="load_more_images">...load more...</button></div>
+  <div class="info"><span class="loaded_so_far">0</span> of <span class="loaded">0</span> files loaded</div>
 
   <script>
     $(document).ready(function(){
 
-
       var image_list = {{image_list}};
+      image_list.sort(() => Math.random() - 0.5);
+
+      var image_files = [];
+      var video_files = [];
+
       var people_lookup = {{people_lookup}};
-      console.log(image_list, people_lookup);
+      console.log(people_lookup);
 
-
-
+      // var initialized_image_count = 0;
+      var pages_of_images_loaded = 0;
+      var max_initial_images = 20;
+      window.grid = false;
       var $images = $('.images');
-      for (let i of image_list) {
-        let $img = $(document.createElement('img'));
-        let $wrapper = $(document.createElement('div'));
-        i = i.split('/dist/')[1];
-        i = './'+i;
-        console.log(i);
-        $wrapper.addClass('image_wrapper');
-        $img.attr('src', i).attr('loading','lazy');
-        $wrapper.append($img);
-        $images.append($wrapper);
+
+      function injectPageOfImages() {
+        var this_count = 0;
+        var initial_offset = pages_of_images_loaded*max_initial_images;
+        // initial_offset++;
+        console.log(initial_offset);
+
+        for(var i = initial_offset; i < (pages_of_images_loaded+1)*max_initial_images; i++) {
+
+          let $wrapper = $(document.createElement('div'));
+          // console.log(i, img_src, person, people_lookup[person]);
+          $wrapper.addClass('image_wrapper');
+
+          var img_src = image_files[i];
+
+          var $img = false;
+          if(img_src.indexOf('.mov') > -1 || img_src.indexOf('.mp4') > -1 || img_src.indexOf('.MP4') > -1) {
+            $img = $(document.createElement('video'));
+            $img.html('<source src="'+img_src+'">');
+            $img.attr('controls', 'controls');
+          } else {
+            $img = $(document.createElement('img'));
+            // img_src = img_src + '.800.jpg';
+            $img.attr('src', img_src);//.attr('loading','lazy');
+          }
+
+          
+          $wrapper.append($img);
+          
+          var person = img_src.split('/')[2];
+          if(people_lookup[person]) {
+            console.log(people_lookup[person]);
+            var person_name = people_lookup[person];
+            if(person_name) {
+              if (person_name.indexOf('instagram.com/') > -1) {
+                person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
+              } 
+            }
+            var $caption = $(document.createElement('caption'));
+            $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+            $wrapper.append($caption);
+          }
+          $images.append($wrapper);
+        }
+        
+        $('.loaded_so_far').text((pages_of_images_loaded+1)*max_initial_images);
+
+
+        pages_of_images_loaded++;
+
+        if(!grid) {
+          grid = Macy({
+              container: '.images',
+              // trueOrder: true,
+              waitForImages: false,
+              margin: 2,
+              columns: 6,
+              breakAt: {
+                  1200: 5,
+                  940: 3,
+                  520: 2,
+                  400: 1
+              }
+          });
+        } else {
+          window.setTimeout(function(){
+            grid.reInit();
+          },100)
+          
+        }
+        
       }
+
+      $('.load_more_images').click(function(){
+
+        if(max_initial_images*pages_of_images_loaded < image_list.length) {
+          injectPageOfImages();
+          // grid.recalculate();
+        } else {
+          console.log('too many pages already');
+        }
+
+
+      });
+
+      // console.log(image_list);
+      
+      
+      var thank_you_obj = {};
+
+      for (let i of image_list) {
+        // if(i.indexOf('.mov') > -1 || i.indexOf('.mp4') > -1 || i.indexOf('.MP4') > -1) {
+        //   //movie
+        //   video_files.push(i);
+        // } else {
+        
+        var person = i.split('/')[2];
+        if(people_lookup[person]){
+          if(thank_you_obj[person]) {
+            thank_you_obj[person]++;
+          } else {
+            thank_you_obj[person] = 1;
+          }
+        }
+        
+        image_files.push(i);
+          
+        // }
+
+
+
+        $('.loaded').text(image_files.length);
+      }
+
+      console.log(thank_you_obj);
+
+      var sorted_people = Object.entries(thank_you_obj)
+        .sort((a, b) => b[1] - a[1])
+        .map(entry => entry[0]);
+
+      var thanks = 'Thanks to ';
+      var person_count = 0;
+
+      for(var p of sorted_people) {
+        person_count++;
+
+        var person_name = p;
+        if (people_lookup[p].indexOf('instagram.com/') > -1) {
+          person_name = '@'+people_lookup[p].split('.com/')[1].split('/')[0].trim();
+        } 
+
+        // var 
+
+        thanks += '<a href="'+people_lookup[p]+'" target="_blank">'+person_name+'</a>'+' ('+thank_you_obj[p]+' file'+(thank_you_obj[p]>1?'s':'')+')';
+        if(person_count != sorted_people.length) {
+          thanks += ' & '; 
+        }
+      }
+      thanks += ' for contributing to these '+image_files.length+' images for TXWT 2023!';
+      console.log(thanks);
+      $('.thankyous').html(thanks);
+
+
+
+
+      
       
 
-      // jQuery('.images').masonry({
-      //   // options
-      //   itemSelector: '.image_wrapper',
-      //   columnWidth: 200,
-      //   percentPosition: true
-      // });
+      injectPageOfImages();
 
-      var macy = Macy({
-          container: '.images',
-          trueOrder: true,
-          waitForImages: false,
-          margin: 2,
-          columns: 6,
-          breakAt: {
-              1200: 5,
-              940: 3,
-              520: 2,
-              400: 1
-          }
-      });
+
+
+      
 
     });
 

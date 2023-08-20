@@ -1,0 +1,88 @@
+  img, video {
+      max-width: 100%;
+      height:auto;
+    }
+    html, body {
+      margin:0;
+      font-family: monospace;
+      box-sizing: border-box;
+
+    }
+    body {
+      margin-left: 2px;
+      margin-right: 2px;
+    }
+    * {
+      box-sizing: inherit;
+      font-family: inherit;
+    }
+    .logo {
+      max-width: 200px;
+      margin: 16px auto;
+      display: block;
+    }
+
+    /* fluid 5 columns */
+    .images {
+      
+      max-width: 2000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+.image_wrapper { width: 20%; }
+.ctas{
+  margin: 16px auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.ctas a {
+ color: black;
+}
+
+
+.image_wrapper {
+  position: relative;
+
+}
+.image_wrapper:hover caption {
+  opacity: 1;
+}
+
+.image_wrapper caption {
+      display: block;
+    background: rgba(255,255,255,.7);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 2px;
+    opacity: 0;
+}
+.image_wrapper caption  a {
+  color: black;
+}
+
+.load_more {
+/*  background: grey;*/
+  margin: 20px 0;
+}
+.info {
+  text-align: center;
+  margin: 20px 0;
+}
+button {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;
+  font-family: monospace;
+  cursor: pointer;
+}
+
+.thankyous {
+  margin: 20px 20px;
+  text-align: center;
+  a {
+    color: inherit;
+    
+  }
+}
