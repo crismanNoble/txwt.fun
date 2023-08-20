@@ -33,11 +33,11 @@
       var video_files = [];
 
       var people_lookup = {{people_lookup}};
-      console.log(people_lookup);
+      // console.log(people_lookup);
 
       // var initialized_image_count = 0;
       var pages_of_images_loaded = 0;
-      var max_initial_images = 20;
+      var max_initial_images = 100;
       window.grid = false;
       var $images = $('.images');
 
@@ -45,7 +45,7 @@
         var this_count = 0;
         var initial_offset = pages_of_images_loaded*max_initial_images;
         // initial_offset++;
-        console.log(initial_offset);
+        // console.log(initial_offset);
 
         for(var i = initial_offset; i < (pages_of_images_loaded+1)*max_initial_images; i++) {
 
@@ -54,38 +54,44 @@
           $wrapper.addClass('image_wrapper');
 
           var img_src = image_files[i];
-
-          var $img = false;
-          if(img_src.indexOf('.mov') > -1 || img_src.indexOf('.mp4') > -1 || img_src.indexOf('.MP4') > -1) {
-            $img = $(document.createElement('video'));
-            $img.html('<source src="'+img_src+'">');
-            $img.attr('controls', 'controls');
-          } else {
-            $img = $(document.createElement('img'));
-            // img_src = img_src + '.800.jpg';
-            $img.attr('src', img_src);//.attr('loading','lazy');
-          }
-
-          
-          $wrapper.append($img);
-          
-          var person = img_src.split('/')[2];
-          if(people_lookup[person]) {
-            console.log(people_lookup[person]);
-            var person_name = people_lookup[person];
-            if(person_name) {
-              if (person_name.indexOf('instagram.com/') > -1) {
-                person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
-              } 
+          if(img_src) {
+            var $img = false;
+            if(img_src.indexOf('.mov') > -1 || img_src.indexOf('.mp4') > -1 || img_src.indexOf('.MP4') > -1) {
+              $img = $(document.createElement('video'));
+              $img.html('<source src="'+img_src+'">');
+              $img.attr('controls', 'controls');
+            } else {
+              $img = $(document.createElement('img'));
+              // img_src = img_src + '.800.jpg';
+              $img.attr('src', img_src);//.attr('loading','lazy');
             }
-            var $caption = $(document.createElement('caption'));
-            $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
-            $wrapper.append($caption);
+
+            
+            $wrapper.append($img);
+            
+            var person = img_src.split('/')[2];
+            if(people_lookup[person]) {
+              // console.log(people_lookup[person]);
+              var person_name = people_lookup[person];
+              if(person_name) {
+                if (person_name.indexOf('instagram.com/') > -1) {
+                  person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
+                } 
+              }
+              var $caption = $(document.createElement('caption'));
+              $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+              $wrapper.append($caption);
+            }
+            $images.append($wrapper);
           }
-          $images.append($wrapper);
+
+        
         }
         
-        $('.loaded_so_far').text((pages_of_images_loaded+1)*max_initial_images);
+        $('.loaded_so_far').text(Math.min(image_files.length,(pages_of_images_loaded+1)*max_initial_images));
+        if((pages_of_images_loaded+1)*max_initial_images >=  image_files.length) {
+          $('.load_more').remove();
+        }
 
 
         pages_of_images_loaded++;
@@ -107,7 +113,14 @@
         } else {
           window.setTimeout(function(){
             grid.reInit();
-          },100)
+          },100);
+          window.setTimeout(function(){
+            grid.reInit();
+          },500);
+          window.setTimeout(function(){
+            grid.reInit();
+          },1000);
+
           
         }
         
@@ -154,7 +167,7 @@
         $('.loaded').text(image_files.length);
       }
 
-      console.log(thank_you_obj);
+      // console.log(thank_you_obj);
 
       var sorted_people = Object.entries(thank_you_obj)
         .sort((a, b) => b[1] - a[1])
@@ -179,7 +192,7 @@
         }
       }
       thanks += ' for contributing to these '+image_files.length+' images for TXWT 2023!';
-      console.log(thanks);
+      // console.log(thanks);
       $('.thankyous').html(thanks);
 
 
