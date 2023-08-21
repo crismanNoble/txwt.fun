@@ -32,11 +32,14 @@ gulp.task('replace', function(){
     image_list_all.push(i);
   }
   var image_list = JSON.stringify(image_list_all);
+
+  var movie_list = JSON.stringify(require('./data/movie_list.json'));
   var people_lookup = JSON.stringify(require('./data/people_lookup.json'));
 
   return gulp.src(['index.html'])
     .pipe(replace('{{image_list}}', image_list.toString()))
     .pipe(replace('{{people_lookup}}', people_lookup.toString()))
+    .pipe(replace('{{movie_list}}', movie_list.toString()))
     .pipe(gulp.dest('docs/'));
 });
 

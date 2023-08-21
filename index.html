@@ -31,6 +31,12 @@
     $(document).ready(function(){
 
       var image_list = {{image_list}};
+
+      var movie_list = {{movie_list}};
+      for(let m of movie_list) {
+        image_list.push(m);
+      }
+
       image_list.sort(() => Math.random() - 0.5);
 
       var image_files = [];
@@ -60,10 +66,11 @@
           var img_src = image_files[i];
           if(img_src) {
             var $img = false;
-            if(img_src.indexOf('.mov') > -1 || img_src.indexOf('.mp4') > -1 || img_src.indexOf('.MP4') > -1) {
+            if(img_src.indexOf('|') > -1) {
               $img = $(document.createElement('video'));
-              $img.html('<source src="'+img_src+'">');
+              $img.html('<source src="'+img_src.split('|')[1]+'">');
               $img.attr('controls', 'controls');
+
             } else {
               $img = $(document.createElement('img'));
               // img_src = img_src + '.800.jpg';
@@ -81,10 +88,21 @@
                 if (person_name.indexOf('instagram.com/') > -1) {
                   person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
                 } 
+                var $caption = $(document.createElement('caption'));
+                $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+                $wrapper.append($caption);
               }
-              var $caption = $(document.createElement('caption'));
-              $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
-              $wrapper.append($caption);
+              
+            } else if(img_src.indexOf('|') > -1) {
+              var person_name = people_lookup[img_src.split('|')[0]];
+              if(person_name) {
+                if (person_name.indexOf('instagram.com/') > -1) {
+                  person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
+                } 
+                var $caption = $(document.createElement('caption'));
+                $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+                $wrapper.append($caption);
+              }
             }
             $images.append($wrapper);
           }
@@ -157,8 +175,16 @@
         //   //movie
         //   video_files.push(i);
         // } else {
-        
+
+        // console.log(i);
+
         var person = i.split('/')[2];
+        if(i.indexOf('|') > -1) {
+          person = i.split('|')[0];
+          console.log(person);
+        }
+        
+        
         if(people_lookup[person]){
           if(thank_you_obj[person]) {
             thank_you_obj[person]++;
@@ -176,7 +202,7 @@
         $('.loaded').text(image_files.length);
       }
 
-      // console.log(thank_you_obj);
+      console.log(thank_you_obj);
 
       var sorted_people = Object.entries(thank_you_obj)
         .sort((a, b) => b[1] - a[1])
@@ -215,6 +241,12 @@
       $(document).on('click', '.image_wrapper', function(){
         // Your code here
         $(this).addClass('caption');
+      });
+
+      $(document).on( "scroll", function() {
+        if(grid) {
+          grid.reInit();
+        }
       });
 
 
