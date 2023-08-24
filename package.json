@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gulp": "./node_modules/.bin/gulp"
+    "gulp": "./node_modules/.bin/gulp",
+    "prep":"npm run gulp image_crawl && npm run gulp"
   },
   "repository": {
     "type": "git",
