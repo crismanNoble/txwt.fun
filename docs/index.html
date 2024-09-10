@@ -16,7 +16,7 @@
 </head>
 <body>
   <img src="./img/logowithflower.png" class="logo"/>
-  <div class="ctas" style="text-align: center;"><a href="https://www.dropbox.com/request/AXpcMWo2DrXTqHKupC8b">Upload your pictures to dropbox to share them here.</a> | <a href="https://forms.gle/6XpZYoXDLL7TEX449">Uploaders: fill out this if want a print of one of your images.</a></div>
+  <div class="ctas" style="text-align: center;"><a href="https://www.dropbox.com/request/dlf3Ip9vvtMqqJiiB2rm">Upload your 2024 pictures to here to share for this year!</a></div>
   
   <div class="thankyous"></div>
   <div class="caveats">Please <strong>do not post uncredited images</strong> to your social media, every photo here shows who took the picture if you hover/click it, always ask first!</div>
@@ -51,38 +51,44 @@
       window.grid = false;
       var $images = $('.images');
 
-      function injectPageOfImages() {
-        var this_count = 0;
-        var initial_offset = pages_of_images_loaded*max_initial_images;
-        // initial_offset++;
-        // console.log(initial_offset);
-
-        for(var i = initial_offset; i < (pages_of_images_loaded+1)*max_initial_images; i++) {
-
-          let $wrapper = $(document.createElement('div'));
+      function createImageOrVideoEl(img_src) {
+        let $wrapper = false;
+        if(img_src) {
+          
+          $wrapper = $(document.createElement('div'));
           // console.log(i, img_src, person, people_lookup[person]);
           $wrapper.addClass('image_wrapper');
 
-          var img_src = image_files[i];
-          if(img_src) {
-            var $img = false;
-            if(img_src.indexOf('|') > -1) {
-              $img = $(document.createElement('video'));
-              $img.html('<source src="'+img_src.split('|')[1]+'">');
-              $img.attr('controls', 'controls');
+          var $img = false;
+          var person = false;
+          if(img_src.indexOf('|') > -1) {
+            $img = $(document.createElement('video'));
+            $img.on('load', function(){
+              console.log('video loaded');
+              grid.reInit();
+            });
+            $img.html('<source src="'+img_src.split('|')[1]+'">');
+            $img.attr('controls', 'controls');
 
-            } else {
-              $img = $(document.createElement('img'));
-              // img_src = img_src + '.800.jpg';
-              $img.attr('src', img_src);//.attr('loading','lazy');
+            $wrapper.append($img);
+
+            var person_name = people_lookup[img_src.split('|')[0]];
+            if(person_name) {
+              if (person_name.indexOf('instagram.com/') > -1) {
+                person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
+              } 
+              var $caption = $(document.createElement('caption'));
+              $caption.html('📹: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+              $wrapper.append($caption);
+              $wrapper.attr('data-person', person_name);
             }
 
-            
+          } else {
+            $img = $(document.createElement('img'));
+            $img.attr('src', img_src);
             $wrapper.append($img);
-            
             var person = img_src.split('/')[2];
             if(people_lookup[person]) {
-              // console.log(people_lookup[person]);
               var person_name = people_lookup[person];
               if(person_name) {
                 if (person_name.indexOf('instagram.com/') > -1) {
@@ -91,23 +97,27 @@
                 var $caption = $(document.createElement('caption'));
                 $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
                 $wrapper.append($caption);
-              }
-              
-            } else if(img_src.indexOf('|') > -1) {
-              var person_name = people_lookup[img_src.split('|')[0]];
-              if(person_name) {
-                if (person_name.indexOf('instagram.com/') > -1) {
-                  person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
-                } 
-                var $caption = $(document.createElement('caption'));
-                $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
-                $wrapper.append($caption);
+                $wrapper.attr('data-person', person_name);
               }
             }
-            $images.append($wrapper);
           }
 
-        
+        }
+        return $wrapper;
+      }
+
+      function injectPageOfImages() {
+        var this_count = 0;
+        var initial_offset = pages_of_images_loaded*max_initial_images;
+        // initial_offset++;
+        // console.log(initial_offset);
+
+        for(var i = initial_offset; i < (pages_of_images_loaded+1)*max_initial_images; i++) {
+          img_src = image_list[i];
+          var $wrapper = createImageOrVideoEl(img_src);
+          if($wrapper) {
+            $images.append($wrapper);
+          }
         }
       
 
@@ -240,14 +250,15 @@
 
       $(document).on('click', '.image_wrapper', function(){
         // Your code here
-        $(this).addClass('caption');
+        $(this).toggleClass('caption');
       });
 
-      $(document).on( "scroll", function() {
-        if(grid) {
-          grid.reInit();
-        }
-      });
+
+      // $(document).on( "scroll", function() {
+      //   if(grid) {
+      //     grid.reInit();
+      //   }
+      // });
 
 
 
