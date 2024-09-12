@@ -5,6 +5,10 @@ var cssmin = require('gulp-cssmin');
 var minify = require('gulp-minify');
 var file = require('gulp-file');
 const replace = require('gulp-replace');
+var rename = require("gulp-rename");
+
+let index_files = ['index.html'];
+// let sub_folders = ['2023'];
 
 gulp.task('sass', function () {
   return gulp.src('./src/**/*.scss')
@@ -36,16 +40,18 @@ gulp.task('replace', function(){
   var movie_list = JSON.stringify(require('./data/movie_list.json'));
   var people_lookup = JSON.stringify(require('./data/people_lookup.json'));
 
-  return gulp.src(['index.html'])
+  return gulp.src(index_files)
     .pipe(replace('{{image_list}}', image_list.toString()))
     .pipe(replace('{{people_lookup}}', people_lookup.toString()))
     .pipe(replace('{{movie_list}}', movie_list.toString()))
     .pipe(gulp.dest('docs/'));
 });
 
+
+
 gulp.task('image_crawl', function(){
   return gulp
-    .src(['./docs/images/**/*.800.jpg','./docs/images/**/*.mov','./docs/images/**/*.mp4','./docs/images/**/*.MP4'])
+    .src(['./docs/images/2024/**/*.800.jpg',])
     .pipe(require('gulp-filelist')('image_list.json', { absolute: true }))
     .pipe(gulp.dest('data'))
 });
@@ -62,7 +68,7 @@ gulp.task('js:watch', gulp.series('js', function (done) {
 }));
 
 gulp.task('file:watch', gulp.series('replace', function (done) {
-  gulp.watch('./index.html', gulp.series('replace'));
+  gulp.watch(index_files, gulp.series('replace'));
   done();
 }));
 

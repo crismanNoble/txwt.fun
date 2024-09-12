@@ -28,6 +28,10 @@
   <div class="info"><span class="loaded_so_far">0</span> of <span class="loaded">0</span> files loaded</div>
 
   <script>
+    window.reinitgrid = function() {
+      console.log('shall we re-initi');
+      grid.reInit();
+    }
     $(document).ready(function(){
 
       var image_list = {{image_list}};
@@ -63,22 +67,21 @@
           var person = false;
           if(img_src.indexOf('|') > -1) {
             $img = $(document.createElement('video'));
-            $img.on('load', function(){
-              console.log('video loaded');
+            $img.on('onloadeddata', function(){
               grid.reInit();
             });
+            $img.attr('onloadeddata','window.reinitgrid()');
             $img.html('<source src="'+img_src.split('|')[1]+'">');
             $img.attr('controls', 'controls');
 
             $wrapper.append($img);
 
-            var person_name = people_lookup[img_src.split('|')[0]];
+            var person_name = img_src.split('|')[0];
             if(person_name) {
-              if (person_name.indexOf('instagram.com/') > -1) {
-                person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
-              } 
+              console.log('person for video', person_name);
+
               var $caption = $(document.createElement('caption'));
-              $caption.html('📹: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
+              $caption.html('📹: <a href="'+people_lookup[person_name].link+'" target="_blank">'+people_lookup[person_name].name+'</a>')
               $wrapper.append($caption);
               $wrapper.attr('data-person', person_name);
             }
@@ -87,18 +90,13 @@
             $img = $(document.createElement('img'));
             $img.attr('src', img_src);
             $wrapper.append($img);
-            var person = img_src.split('/')[2];
-            if(people_lookup[person]) {
-              var person_name = people_lookup[person];
-              if(person_name) {
-                if (person_name.indexOf('instagram.com/') > -1) {
-                  person_name = '@'+person_name.split('.com/')[1].split('/')[0].trim();
-                } 
-                var $caption = $(document.createElement('caption'));
-                $caption.html('📷: <a href="'+people_lookup[person]+'" target="_blank">'+person_name+'</a>')
-                $wrapper.append($caption);
-                $wrapper.attr('data-person', person_name);
-              }
+            var person_name = img_src.split('/')[3];
+            if(people_lookup[person_name]) {
+              var $caption = $(document.createElement('caption'));
+              $caption.html('📷: <a href="'+people_lookup[person_name].link+'" target="_blank">'+people_lookup[person_name].name+'</a>')
+              $wrapper.append($caption);
+              $wrapper.attr('data-person', person_name);
+              
             }
           }
 
@@ -132,7 +130,7 @@
         if(!grid) {
           var cols = 6;
           var ww = $(window).width();
-          console.log('ww', ww);
+          // console.log('ww', ww);
           if(ww < 1200) {
             cols = 4;
           }
@@ -188,7 +186,7 @@
 
         // console.log(i);
 
-        var person = i.split('/')[2];
+        var person = i.split('/')[3];
         if(i.indexOf('|') > -1) {
           person = i.split('|')[0];
           console.log(person);
@@ -225,26 +223,18 @@
         person_count++;
 
         var person_name = p;
-        if (people_lookup[p].indexOf('instagram.com/') > -1) {
-          person_name = '@'+people_lookup[p].split('.com/')[1].split('/')[0].trim();
-        } 
 
+        console.log(person_name);
         // var 
 
-        thanks += '<a href="'+people_lookup[p]+'" target="_blank">'+person_name+'</a>'+' ('+thank_you_obj[p]+' file'+(thank_you_obj[p]>1?'s':'')+')';
+        thanks += '<a href="'+people_lookup[person_name].link+'" target="_blank">'+people_lookup[person_name].name+'</a>'+' ('+thank_you_obj[p]+' file'+(thank_you_obj[p]>1?'s':'')+')';
         if(person_count != sorted_people.length) {
           thanks += ' & '; 
         }
       }
-      thanks += ' for contributing to these '+image_files.length+' images for TXWT 2023!';
+      thanks += ' for contributing to these '+image_files.length+' images for TXWT 2024!';
       // console.log(thanks);
       $('.thankyous').html(thanks);
-
-
-
-
-      
-      
 
       injectPageOfImages();
 
